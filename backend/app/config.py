@@ -80,6 +80,12 @@ class Settings(BaseSettings):
     search_vector_limit: int = 50
     search_hybrid_limit: int = 30
 
+    # --- Audio / Transcription ---
+    audio_max_size_mb: int = 500
+    stt_engine: str = "faster-whisper"  # faster-whisper | whisper | none
+    stt_model_size: str = "base"  # tiny | base | small | medium | large
+    diarization_enabled: bool = False
+
     # --- Upload ---
     max_upload_size_mb: int = 100
     allowed_mime_types: str = (

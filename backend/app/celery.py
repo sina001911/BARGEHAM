@@ -15,6 +15,7 @@ celery_app = Celery(
         "app.workers.ocr",
         "app.workers.embed",
         "app.workers.index",
+        "app.workers.transcribe",
     ],
 )
 
@@ -29,6 +30,7 @@ celery_app.conf.update(
         "app.workers.ocr.process_document": {"queue": "ocr"},
         "app.workers.embed.embed_chunks": {"queue": "embed"},
         "app.workers.index.index_document": {"queue": "index"},
+        "app.workers.transcribe.transcribe_audio": {"queue": "transcribe"},
     },
     worker_prefetch_multiplier=1,
     worker_max_tasks_per_child=50,

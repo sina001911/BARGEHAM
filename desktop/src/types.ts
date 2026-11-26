@@ -283,3 +283,52 @@ export interface LearningAnalytics {
   streak_days: number;
   topics_mastered: number;
 }
+
+// --------------------------------------------------------------------------- //
+// Audio Library
+// --------------------------------------------------------------------------- //
+export interface AudioFile {
+  id: string;
+  title: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  duration_seconds: number | null;
+  bitrate: number | null;
+  sample_rate: number | null;
+  channels: number | null;
+  codec: string | null;
+  status: string;
+  language: string | null;
+  has_transcript: boolean;
+  transcript_confidence: number | null;
+  summary: string | null;
+  created_at: string;
+}
+
+export interface AudioChapter {
+  id: string;
+  audio_id: string;
+  title: string;
+  start_seconds: number;
+  end_seconds: number | null;
+  order_index: number;
+}
+
+export interface TranscriptSegment {
+  id: string;
+  audio_id: string;
+  segment_index: number;
+  start_seconds: number;
+  end_seconds: number;
+  text: string;
+  speaker: string | null;
+  confidence: number | null;
+}
+
+export interface AudioPlaylist {
+  id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+}

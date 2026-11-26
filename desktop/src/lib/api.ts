@@ -413,3 +413,85 @@ export const academyApi = {
   getLearningAnalytics: async (courseId: string): Promise<any> =>
     request<any>(`/academy/analytics?course_id=${courseId}`, { method: "GET" }),
 };
+
+// --------------------------------------------------------------------------- //
+// Audio Library APIs
+// --------------------------------------------------------------------------- //
+const AUDIO_BASE = "http://localhost:8000";
+
+export const audioApi = {
+  list: async (params?: { q?: string; skip?: number; limit?: number }): Promise<{ items: any[]; total: number }> => {
+    const url = new URL(`${AUDIO_BASE}/audio`);
+    if (params?.q) url.searchParams.append("q", params.q);
+    if (params?.skip != null) url.searchParams.append("skip", String(params.skip));
+    if (params?.limit != null) url.searchParams.append("limit", String(params.limit));
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error(`Audio list failed: ${res.status}`);
+    return res.json();
+  },
+
+  get: async (audioId: string): Promise<any> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/${audioId}`);
+    if (!res.ok) throw new Error(`Audio fetch failed: ${res.status}`);
+    return res.json();
+  },
+
+  upload: async (file: File, title?: string): Promise<any> => {
+    const form = new FormData();
+    form.append("file", file);
+    if (title) form.append("title", title);
+    const res = await fetch(`${AUDIO_BASE}/audio`, { method: "POST", body: form });
+    if (!res.ok) throw new Error(`Audio upload failed: ${res.status}`);
+    return res.json();
+  },
+
+  delete: async (audioId: string): Promise<void> => {
+    await fetch(`${AUDIO_BASE}/audio/${audioId}`, { method: "DELETE" });
+  },
+
+  streamUrl: (audioId: string): string => `${AUDIO_BASE}/audio/${audioId}/stream`,
+
+  listChapters: async (audioId: string): Promise<any[]> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/${audioId}/chapters`);
+    if (!res.ok) throw new Error("Chapters fetch failed");
+    return res.json();
+  },
+
+  createChapter: async (audioId: string, title: string, startSeconds: number, endSeconds?: number): Promise<any> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/${audioId}/chapters`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, start_seconds: startSeconds, end_seconds: endSeconds }),
+    });
+    if (!res.ok) throw new Error("Chapter create failed");
+    return res.json();
+  },
+
+  listSegments: async (audioId: string): Promise<any[]> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/${audioId}/segments`);
+    if (!res.ok) throw new Error("Segments fetch failed");
+    return res.json();
+  },
+
+  searchTranscripts: async (q: string): Promise<any[]> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/search/transcripts?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error("Transcript search failed");
+    return res.json();
+  },
+
+  listPlaylists: async (): Promise<any[]> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/playlists`);
+    if (!res.ok) throw new Error("Playlists fetch failed");
+    return res.json();
+  },
+
+  createPlaylist: async (name: string, description?: string): Promise<any> => {
+    const res = await fetch(`${AUDIO_BASE}/audio/playlists`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!res.ok) throw new Error("Playlist create failed");
+    return res.json();
+  },
+};

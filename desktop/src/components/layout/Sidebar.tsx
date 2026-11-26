@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LayoutDashboard, FileText, Upload, Search, MessageCircle, Settings, GraduationCap, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, Upload, Search, MessageCircle, Settings, GraduationCap, Music, LogOut, Menu, X } from "lucide-react";
 
 const navItems = [
   { href: "#dashboard", label: "داشبورد", icon: LayoutDashboard },
@@ -8,6 +8,7 @@ const navItems = [
   { href: "#search", label: "جستجو", icon: Search },
   { href: "#ask", label: "پرسش و پاسخ", icon: MessageCircle },
   { href: "#academy", label: "آکادمی", icon: GraduationCap },
+  { href: "#audio", label: "کتابخانه صوتی", icon: Music },
   { href: "#settings", label: "تنظیمات", icon: Settings },
 ];
 

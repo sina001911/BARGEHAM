@@ -15,6 +15,8 @@ import CourseDetailPage from "@/pages/CourseDetailPage";
 import QuizPage from "@/pages/QuizPage";
 import FlashcardsPage from "@/pages/FlashcardsPage";
 import SocraticPage from "@/pages/SocraticPage";
+import AudioLibraryPage from "@/pages/AudioLibraryPage";
+import AudioPlayerPage from "@/pages/AudioPlayerPage";
 import Toast from "@/components/ui/Toast";
 
 const PAGE_ROUTES: Record<string, React.ComponentType> = {
@@ -33,6 +35,8 @@ const SELF_WRAPPED_ROUTES = new Set([
   "academy-quiz",
   "academy-flashcards",
   "academy-socratic",
+  "audio",
+  "audio-player",
 ]);
 
 export default function App() {
@@ -81,6 +85,10 @@ export default function App() {
         setHash("academy-socratic");
         return;
       }
+      if (h.startsWith("audio/player/")) {
+        setHash("audio-player");
+        return;
+      }
       setHash(h || "dashboard");
       setDocId(null);
     };
@@ -98,6 +106,8 @@ export default function App() {
       setHash("academy-flashcards");
     } else if (h.startsWith("academy/socratic")) {
       setHash("academy-socratic");
+    } else if (h.startsWith("audio/player/")) {
+      setHash("audio-player");
     } else {
       setHash(h || "dashboard");
     }
@@ -151,6 +161,8 @@ export default function App() {
         {hash === "academy-quiz" && <QuizPage />}
         {hash === "academy-flashcards" && <FlashcardsPage />}
         {hash === "academy-socratic" && <SocraticPage />}
+        {hash === "audio" && <AudioLibraryPage />}
+        {hash === "audio-player" && <AudioPlayerPage />}
       </>
     );
   }
