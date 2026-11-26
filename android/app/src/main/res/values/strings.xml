@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BARGEHAM</string>
+    <string name="add_folder">Add Folder</string>
+    <string name="search_documents">Search Documents</string>
+    <string name="ask_ai_assistant">Ask AI Assistant</string>
+    <string name="document_manager">Document Manager</string>
+</resources>

@@ -1,0 +1,1 @@
+"""Academy Foundation package."""

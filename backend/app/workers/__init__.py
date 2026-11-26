@@ -1,0 +1,1 @@
+"""Background worker tasks (OCR, embedding, indexing)."""

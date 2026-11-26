@@ -1,0 +1,1 @@
+"""Duplicate document detection package."""

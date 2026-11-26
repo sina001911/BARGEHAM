@@ -1,0 +1,1 @@
+"""BARGEHAM — Intelligent Document Processing Platform."""

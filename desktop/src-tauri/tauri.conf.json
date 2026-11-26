@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "BARGEHAM",
+  "version": "0.1.0",
+  "identifier": "com.bargeham.app",
+  "build": {
+    "frontendDist": "../../dist",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:1420"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "BARGEHAM - Intelligent Document Processing",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false,
+        "minWidth": 900,
+        "minHeight": 600
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "nsis",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "log": {
+      "level": "debug",
+      "levels": {
+        "tauri-plugin-log": "debug",
+        "tauri-plugin-dialog": "debug",
+        "tauri-plugin-fs": "debug",
+        "tauri-plugin-shell": "debug",
+        "tauri-plugin-notification": "debug"
+      }
+    },
+    "dialog": {},
+    "fs": {
+      "scope": ["$HOME"]
+    },
+    "shell": {},
+    "notification": {}
+  }
+}

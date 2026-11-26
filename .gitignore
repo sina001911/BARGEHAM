@@ -1,0 +1,55 @@
+# PHP / Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+vendor/
+
+# Node.js
+node_modules/
+frontend/node_modules/
+desktop/node_modules/
+frontend/.next/
+desktop/dist/
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# Environment & secrets
+backend/.env
+backend/*.txt
+backend/*.json
+!backend/.env.example
+
+# Logs
+*.log
+backend/backend.log
+
+# Local storage (uploaded documents)
+backend/storage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Tauri desktop build output
+desktop/src-tauri/target/
+desktop/src-tauri/Cargo.lock
+
+# Android build
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+
+# Test docs temporary
+test-docs/*.py
+test-docs/*_result.txt
