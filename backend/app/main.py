@@ -23,6 +23,7 @@ from app.documents.router import (
     folders_router,
     router as documents_router,
     tags_router,
+    watchers_router,
 )
 from app.exceptions import register_exception_handlers
 from app.logging import configure_logging
@@ -34,6 +35,12 @@ from app.academy.intelligence_router import router as academy_intelligence_route
 from app.academy.learning_router import router as academy_learning_router
 from app.academy.router import router as academy_router
 from app.classification.router import router as classification_router
+from app.knowledge.graph_router import (
+    extract_router as knowledge_extract_router,
+    relations_router as knowledge_relations_router,
+    router as knowledge_graph_router,
+    traverse_router as knowledge_traverse_router,
+)
 from app.knowledge.router import router as knowledge_router
 from app.search.router import router as search_router
 from app.users.models import User
@@ -58,7 +65,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         db_available = False
         print(f"[BARGEHAM] WARNING: Database not available ({exc}). "
               f"Running in limited mode — DB endpoints will return 503.")
-    yield
+    # Start folder watcher after DB is ready
+    from app.folder_watcher import get_watcher
+
+    watcher = get_watcher()
+    watcher.start()
+    try:
+        yield
+    finally:
+        watcher.stop()
     await close_db()
 
 
@@ -106,7 +121,12 @@ app.include_router(folders_router)
 app.include_router(tags_router)
 app.include_router(search_router)
 app.include_router(classification_router)
+app.include_router(knowledge_graph_router)
+app.include_router(knowledge_relations_router)
+app.include_router(knowledge_extract_router)
+app.include_router(knowledge_traverse_router)
 app.include_router(knowledge_router)
+app.include_router(watchers_router)
 app.include_router(academy_router)
 app.include_router(academy_intelligence_router)
 app.include_router(academy_learning_router)

@@ -311,3 +311,105 @@ export const startFolderWatcher = (folderPath: string) => {
   console.log("start_folder_watcher not implemented via HTTP:", folderPath);
   return Promise.resolve("watcher not available");
 };
+// --------------------------------------------------------------------------- //
+// Academy APIs
+// --------------------------------------------------------------------------- //
+
+export const academyApi = {
+  // Courses
+  listCourses: async (): Promise<any[]> =>
+    request<any[]>(`/academy/courses`, { method: "GET" }),
+
+  createCourse: async (data: { name: string; description?: string }): Promise<any> =>
+    request<any>(`/academy/courses`, { method: "POST", body: data }),
+
+  getCourse: async (courseId: string): Promise<any> =>
+    request<any>(`/academy/courses/${courseId}`, { method: "GET" }),
+
+  deleteCourse: async (courseId: string): Promise<void> =>
+    request<void>(`/academy/courses/${courseId}`, { method: "DELETE" }),
+
+  // Lessons
+  listLessons: async (courseId: string): Promise<any[]> =>
+    request<any[]>(`/academy/lessons?course_id=${courseId}`, { method: "GET" }),
+
+  generateLesson: async (courseId: string, topic: string, lessonType?: string): Promise<any> =>
+    request<any>(`/academy/lessons/generate`, {
+      method: "POST",
+      body: { course_id: courseId, topic, lesson_type: lessonType || "concept" },
+    }),
+
+  getLesson: async (lessonId: string): Promise<any> =>
+    request<any>(`/academy/lessons/${lessonId}`, { method: "GET" }),
+
+  deleteLesson: async (lessonId: string): Promise<void> =>
+    request<void>(`/academy/lessons/${lessonId}`, { method: "DELETE" }),
+
+  // Quizzes
+  listQuizzes: async (courseId: string): Promise<any[]> =>
+    request<any[]>(`/academy/quizzes?course_id=${courseId}`, { method: "GET" }),
+
+  generateQuiz: async (courseId: string, numQuestions: number = 10): Promise<any> =>
+    request<any>(`/academy/quizzes`, {
+      method: "POST",
+      body: { course_id: courseId, num_questions: numQuestions },
+    }),
+
+  getQuiz: async (quizId: string): Promise<any> =>
+    request<any>(`/academy/quizzes/${quizId}`, { method: "GET" }),
+
+  startQuizAttempt: async (quizId: string): Promise<any> =>
+    request<any>(`/academy/quiz-attempts`, {
+      method: "POST",
+      body: { quiz_id: quizId },
+    }),
+
+  submitQuizAnswer: async (attemptId: string, questionId: string, answer: string): Promise<any> =>
+    request<any>(`/academy/quiz-attempts/${attemptId}/submit`, {
+      method: "POST",
+      body: { question_id: questionId, answer },
+    }),
+
+  // Flashcards
+  listFlashcards: async (courseId: string): Promise<any[]> =>
+    request<any[]>(`/academy/flashcards?course_id=${courseId}`, { method: "GET" }),
+
+  createFlashcard: async (data: {
+    course_id: string; front: string; back: string;
+  }): Promise<any> =>
+    request<any>(`/academy/flashcards`, { method: "POST", body: data }),
+
+  reviewFlashcard: async (cardId: string, known: boolean): Promise<any> =>
+    request<any>(`/academy/flashcards/${cardId}/review`, {
+      method: "PATCH",
+      body: { known },
+    }),
+
+  // Socratic
+  createSocraticSession: async (courseId: string, topic: string): Promise<any> =>
+    request<any>(`/academy/socratic/sessions`, {
+      method: "POST",
+      body: { course_id: courseId, topic },
+    }),
+
+  respondToSocratic: async (sessionId: string, message: string): Promise<any> =>
+    request<any>(`/academy/socratic/sessions/${sessionId}/respond`, {
+      method: "POST",
+      body: { message },
+    }),
+
+  closeSocraticSession: async (sessionId: string): Promise<any> =>
+    request<any>(`/academy/socratic/sessions/${sessionId}/close`, {
+      method: "POST",
+    }),
+
+  // Learner memory & analytics
+  getLearnerMemory: async (courseId: string): Promise<any> =>
+    request<any>(`/academy/learner-memory?course_id=${courseId}`, { method: "GET" }),
+
+  upsertLearnerMemory: async (data: Record<string, unknown>): Promise<any> =>
+    request<any>(`/academy/learner-memory`, { method: "POST", body: data }),
+
+  getLearningAnalytics: async (courseId: string): Promise<any> =>
+    request<any>(`/academy/analytics?course_id=${courseId}`, { method: "GET" }),
+};

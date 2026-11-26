@@ -1,9 +1,9 @@
 """Knowledge base models: independent KB, entries with provenance, document links."""
 from __future__ import annotations
 
+import enum
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 
 import sqlalchemy as sa
 from pgvector.sqlalchemy import Vector as _Vector
@@ -79,5 +79,67 @@ class KnowledgeDocumentLink(SQLModel, table=True):
     created_at: datetime = Field(default_factory=_utcnow)
 
 
+# --------------------------------------------------------------------------- #
+# Knowledge Graph — Entities & Relations
+# --------------------------------------------------------------------------- #
+
+class EntityTypeName(str, enum.Enum):
+    PERSON = "person"
+    ORGANIZATION = "organization"
+    LOCATION = "location"
+    DATE = "date"
+    CONCEPT = "concept"
+    DOCUMENT = "document"
+    EVENT = "event"
+    OTHER = "other"
+
+
+class KnowledgeEntity(SQLModel, table=True):
+    """A named entity extracted from KB entries (person, org, location, etc.)."""
+    __tablename__ = "knowledge_entity"
+    __table_args__ = (
+        Index(
+            "ix_knowledge_entity_kb_type",
+            "kb_id",
+            "entity_type",
+        ),
+    )
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    kb_id: uuid.UUID = Field(foreign_key="knowledgebase.id", index=True)
+    name: str = Field(max_length=500, index=True)
+    entity_type: str = Field(default=EntityTypeName.PERSON.value, max_length=100)
+    description: str | None = Field(default=None)
+    source_entries: str = Field(default="[]", max_length=4096)  # JSON array of entry IDs
+    embedding: list[float] | None = Field(
+        default=None,
+        sa_column=Column(_Vector(settings.embedding_dim), nullable=True),
+    )
+    created_at: datetime = Field(default_factory=_utcnow)
+    updated_at: datetime = Field(default_factory=_utcnow)
+
+
+class KnowledgeRelation(SQLModel, table=True):
+    """A relation between two entities: subject --predicate--> object_value."""
+    __tablename__ = "knowledge_relation"
+    __table_args__ = (
+        Index("ix_knowledge_relation_subject", "subject_id"),
+        Index("ix_knowledge_relation_predicate", "predicate"),
+        Index("ix_knowledge_relation_kb", "kb_id", "predicate"),
+    )
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    kb_id: uuid.UUID = Field(foreign_key="knowledgebase.id", index=True)
+    subject_id: uuid.UUID = Field(foreign_key="knowledge_entity.id", index=True)
+    predicate: str = Field(max_length=200, index=True)
+    object_value: str = Field(max_length=500)
+    object_type: str = Field(default="literal", max_length=100)  # entity | literal
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    evidence_entry_ids: str = Field(default="[]", max_length=4096)  # JSON array
+    created_at: datetime = Field(default_factory=_utcnow)
+
+
 KnowledgeBase.model_rebuild()
 KnowledgeEntry.model_rebuild()
+KnowledgeDocumentLink.model_rebuild()
+KnowledgeEntity.model_rebuild()

@@ -10,6 +10,11 @@ import SearchPage from "@/pages/SearchPage";
 import AskPage from "@/pages/AskPage";
 import DocumentDetailPage from "@/pages/DocumentDetailPage";
 import SettingsPage from "@/pages/SettingsPage";
+import AcademyPage from "@/pages/AcademyPage";
+import CourseDetailPage from "@/pages/CourseDetailPage";
+import QuizPage from "@/pages/QuizPage";
+import FlashcardsPage from "@/pages/FlashcardsPage";
+import SocraticPage from "@/pages/SocraticPage";
 import Toast from "@/components/ui/Toast";
 
 const PAGE_ROUTES: Record<string, React.ComponentType> = {
@@ -20,6 +25,15 @@ const PAGE_ROUTES: Record<string, React.ComponentType> = {
   ask: AskPage,
   settings: SettingsPage,
 };
+
+// Academy pages wrap themselves in AppShell, so they render standalone.
+const SELF_WRAPPED_ROUTES = new Set([
+  "academy",
+  "academy-course",
+  "academy-quiz",
+  "academy-flashcards",
+  "academy-socratic",
+]);
 
 export default function App() {
   const [initialized, setInitialized] = useState(false);
@@ -48,10 +62,27 @@ export default function App() {
       if (docMatch) {
         setHash("document");
         setDocId(docMatch[1]);
-      } else {
-        setHash(h || "dashboard");
-        setDocId(null);
+        return;
       }
+      // Academy sub-routes
+      if (h.startsWith("academy/course/")) {
+        setHash("academy-course");
+        return;
+      }
+      if (h.startsWith("academy/quiz/")) {
+        setHash("academy-quiz");
+        return;
+      }
+      if (h.startsWith("academy/flashcards")) {
+        setHash("academy-flashcards");
+        return;
+      }
+      if (h.startsWith("academy/socratic")) {
+        setHash("academy-socratic");
+        return;
+      }
+      setHash(h || "dashboard");
+      setDocId(null);
     };
     window.addEventListener("hashchange", handler);
     const h = window.location.hash.slice(1);
@@ -59,6 +90,14 @@ export default function App() {
     if (docMatch) {
       setHash("document");
       setDocId(docMatch[1]);
+    } else if (h.startsWith("academy/course/")) {
+      setHash("academy-course");
+    } else if (h.startsWith("academy/quiz/")) {
+      setHash("academy-quiz");
+    } else if (h.startsWith("academy/flashcards")) {
+      setHash("academy-flashcards");
+    } else if (h.startsWith("academy/socratic")) {
+      setHash("academy-socratic");
     } else {
       setHash(h || "dashboard");
     }
@@ -99,6 +138,20 @@ export default function App() {
           <p className="text-gray-600">در حال بارگذاری...</p>
         </div>
       </div>
+    );
+  }
+
+  // Academy pages manage their own AppShell wrapper.
+  if (SELF_WRAPPED_ROUTES.has(hash)) {
+    return (
+      <>
+        <Toast />
+        {hash === "academy" && <AcademyPage />}
+        {hash === "academy-course" && <CourseDetailPage />}
+        {hash === "academy-quiz" && <QuizPage />}
+        {hash === "academy-flashcards" && <FlashcardsPage />}
+        {hash === "academy-socratic" && <SocraticPage />}
+      </>
     );
   }
 

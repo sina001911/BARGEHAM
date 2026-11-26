@@ -139,3 +139,147 @@ export interface DuplicateResult {
   near_similarity: number;
   content_hash: string;
 }
+
+// --------------------------------------------------------------------------- //
+// Academy — Courses
+// --------------------------------------------------------------------------- //
+export interface Course {
+  id: string;
+  name: string;
+  description: string | null;
+  course_type: string;
+  owner_id: string;
+  is_active: boolean;
+  documents_indexed: number;
+  chunks_indexed: number;
+  lessons_completed: number;
+  quizzes_taken: number;
+  average_score: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseCreate {
+  name: string;
+  description?: string;
+  course_type?: string;
+}
+
+// --------------------------------------------------------------------------- //
+// Academy — Lessons
+// --------------------------------------------------------------------------- //
+export interface Lesson {
+  id: string;
+  course_id: string;
+  topic: string;
+  title: string;
+  content: string;
+  lesson_type: string;
+  status: string;
+  order_index: number;
+  estimated_minutes: number | null;
+  ai_generated: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// --------------------------------------------------------------------------- //
+// Academy — Quizzes
+// --------------------------------------------------------------------------- //
+export interface QuizQuestion {
+  id: string;
+  quiz_id: string;
+  question_text: string;
+  options: string[];
+  correct_answer: string;
+  explanation: string | null;
+}
+
+export interface Quiz {
+  id: string;
+  course_id: string;
+  title: string;
+  quiz_type: string;
+  status: string;
+  questions: QuizQuestion[];
+  created_at: string;
+}
+
+export interface QuizAttempt {
+  id: string;
+  quiz_id: string;
+  user_id: string;
+  score: number;
+  total_questions: number;
+  answers: Record<string, string>;
+  status: string;
+  started_at: string;
+  completed_at: string | null;
+}
+
+// --------------------------------------------------------------------------- //
+// Academy — Flashcards
+// --------------------------------------------------------------------------- //
+export interface Flashcard {
+  id: string;
+  course_id: string;
+  user_id: string;
+  front: string;
+  back: string;
+  ease_factor: number;
+  interval_days: number;
+  repetitions: number;
+  due_date: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// --------------------------------------------------------------------------- //
+// Academy — Socratic Session
+// --------------------------------------------------------------------------- //
+export interface SocraticMessage {
+  role: "user" | "assistant";
+  content: string;
+  mode: string;
+  timestamp: string;
+}
+
+export interface SocraticSession {
+  id: string;
+  course_id: string;
+  user_id: string;
+  topic: string;
+  messages: SocraticMessage[];
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// --------------------------------------------------------------------------- //
+// Academy — Learner Memory & Progress
+// --------------------------------------------------------------------------- //
+export interface LearnerMemory {
+  id: string;
+  course_id: string;
+  user_id: string;
+  topic: string;
+  mastery_level: number;
+  confidence: number;
+  mistakes: string | null;
+  weaknesses: string | null;
+  goals: string | null;
+  progress_summary: string | null;
+  updated_at: string;
+  created_at: string;
+}
+
+export interface LearningAnalytics {
+  courses_enrolled: number;
+  lessons_completed: number;
+  quizzes_taken: number;
+  flashcards_reviewed: number;
+  average_quiz_score: number;
+  streak_days: number;
+  topics_mastered: number;
+}

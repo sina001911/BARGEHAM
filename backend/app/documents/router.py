@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, timezone
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, File, Form, Query, Response, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import SQLModel
 
 from app.auth.router import get_current_admin, get_current_user
 from app.database import get_session
@@ -339,3 +341,77 @@ async def delete_tag(
     """Delete a tag."""
     await service.delete_tag(session, tag_id)
     return Message(message="Tag deleted")
+
+
+# -------------------------------- Folder Watchers -------------------------- #
+watchers_router = APIRouter(prefix="/watchers", tags=["folder-watchers"])
+
+
+class WatcherCreateBody(SQLModel):
+    """Create a new folder watch rule."""
+    folder_id: uuid.UUID
+    directory_path: str
+    display_name: str | None = None
+    poll_interval_seconds: int | None = None
+
+
+@watchers_router.get("", response_model=list[dict])
+async def list_watchers(
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+) -> list[dict]:
+    """List all active folder watchers with stats."""
+    from app.folder_watcher import get_watcher
+
+    watcher = get_watcher()
+    result = []
+    for path, state in watcher._states.items():
+        result.append({
+            "path": state.path,
+            "display_name": path.split("/")[-1] or path,
+            "is_active": True,
+            "items_scanned": state.items_scanned,
+            "items_new": state.items_new,
+            "items_updated": state.items_updated,
+            "last_scan_at": datetime.fromtimestamp(state.last_scan, tz=timezone.utc).isoformat() if state.last_scan else None,
+        })
+    return result
+
+
+@watchers_router.post("", response_model=dict, status_code=201)
+async def create_watcher(
+    body: WatcherCreateBody,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """Start watching a new directory."""
+    from app.folder_watcher import get_watcher
+    from app.documents.models import Folder
+
+    folder = await session.get(Folder, body.folder_id)
+    if folder is None:
+        raise ValidationFailedError("Folder not found")
+
+    watcher = get_watcher()
+    watcher.get_state(body.directory_path)
+    return {
+        "path": body.directory_path,
+        "display_name": body.display_name or body.directory_path.split("/")[-1],
+        "is_active": True,
+        "message": f"Watching {body.directory_path}",
+    }
+
+
+@watchers_router.delete("/{path}")
+async def delete_watcher(
+    path: str,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+) -> Message:
+    """Stop watching a directory."""
+    from app.folder_watcher import get_watcher
+
+    watcher = get_watcher()
+    watcher.remove_state(path)
+    return Message(message=f"Stopped watching {path}")
+

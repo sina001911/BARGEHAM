@@ -113,3 +113,37 @@ class DocumentListResponse(SQLModel):
     total: int
     skip: int
     limit: int
+
+
+# --------------------------------------------------------------------------- #
+# Folder Watcher schemas
+# --------------------------------------------------------------------------- #
+
+
+class WatcherCreate(SQLModel):
+    """Request body for creating a watched folder."""
+    path: str
+    name: str | None = None
+    poll_interval_seconds: int | None = None
+
+
+class WatcherRead(SQLModel):
+    id: uuid.UUID
+    folder_id: uuid.UUID
+    directory_path: str
+    display_name: str
+    is_active: bool
+    items_scanned: int = 0
+    items_new: int = 0
+    items_updated: int = 0
+    last_scan_at: datetime | None = None
+    created_at: datetime
+
+
+class WatcherStats(SQLModel):
+    path: str
+    scanned: int = 0
+    new: int = 0
+    updated: int = 0
+    triggered: int = 0
+    error: str | None = None
