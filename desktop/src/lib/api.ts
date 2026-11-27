@@ -495,3 +495,119 @@ export const audioApi = {
     return res.json();
   },
 };
+
+// --------------------------------------------------------------------------- //
+// Audio Creation Studio APIs
+// --------------------------------------------------------------------------- //
+const CREATION_BASE = "http://localhost:8000/creation";
+
+export const creationApi = {
+  listVoices: async (language?: string): Promise<any[]> => {
+    const url = new URL(`${CREATION_BASE}/voices`);
+    if (language) url.searchParams.append("language", language);
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error("Voices fetch failed");
+    return res.json();
+  },
+
+  // Audiobooks
+  createAudiobook: async (data: {
+    title: string; source_document_id: string; voice_id: string;
+    speed?: number; output_format?: string;
+  }): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/audiobooks`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Audiobook create failed");
+    return res.json();
+  },
+  listAudiobooks: async (): Promise<any[]> => {
+    const res = await fetch(`${CREATION_BASE}/audiobooks`);
+    if (!res.ok) throw new Error("Audiobooks fetch failed");
+    return res.json();
+  },
+  getAudiobook: async (id: string): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/audiobooks/${id}`);
+    if (!res.ok) throw new Error("Audiobook fetch failed");
+    return res.json();
+  },
+  generateAudiobook: async (id: string): Promise<void> => {
+    await fetch(`${CREATION_BASE}/audiobooks/${id}/generate`, { method: "POST" });
+  },
+  listAudiobookChapters: async (id: string): Promise<any[]> => {
+    const res = await fetch(`${CREATION_BASE}/audiobooks/${id}/chapters`);
+    if (!res.ok) throw new Error("Chapters fetch failed");
+    return res.json();
+  },
+
+  // Podcasts
+  createPodcast: async (data: {
+    title: string; description?: string; output_format?: string;
+  }): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Podcast create failed");
+    return res.json();
+  },
+  listPodcasts: async (): Promise<any[]> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts`);
+    if (!res.ok) throw new Error("Podcasts fetch failed");
+    return res.json();
+  },
+  getPodcast: async (id: string): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts/${id}`);
+    if (!res.ok) throw new Error("Podcast fetch failed");
+    return res.json();
+  },
+  generatePodcast: async (id: string): Promise<void> => {
+    await fetch(`${CREATION_BASE}/podcasts/${id}/generate`, { method: "POST" });
+  },
+  listPodcastSpeakers: async (id: string): Promise<any[]> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts/${id}/speakers`);
+    if (!res.ok) throw new Error("Speakers fetch failed");
+    return res.json();
+  },
+  addPodcastSpeaker: async (projectId: string, name: string, voiceId: string, color?: string): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts/${projectId}/speakers`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, voice_id: voiceId, color }),
+    });
+    if (!res.ok) throw new Error("Speaker add failed");
+    return res.json();
+  },
+  listPodcastSegments: async (id: string): Promise<any[]> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts/${id}/segments`);
+    if (!res.ok) throw new Error("Segments fetch failed");
+    return res.json();
+  },
+  addPodcastSegment: async (projectId: string, data: {
+    speaker_id?: string; text: string; voice_speed?: number; emotion?: string;
+  }): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/podcasts/${projectId}/segments`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Segment add failed");
+    return res.json();
+  },
+
+  // Pronunciation
+  listPronunciation: async (language: string): Promise<any[]> => {
+    const res = await fetch(`${CREATION_BASE}/pronunciation?language=${encodeURIComponent(language)}`);
+    if (!res.ok) throw new Error("Pronunciation fetch failed");
+    return res.json();
+  },
+  addPronunciation: async (data: {
+    language: string; word: string; replacement: string; rule_type?: string;
+  }): Promise<any> => {
+    const res = await fetch(`${CREATION_BASE}/pronunciation`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Pronunciation add failed");
+    return res.json();
+  },
+};

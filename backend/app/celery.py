@@ -16,6 +16,8 @@ celery_app = Celery(
         "app.workers.embed",
         "app.workers.index",
         "app.workers.transcribe",
+        "app.workers.audiobook",
+        "app.workers.podcast",
     ],
 )
 
@@ -31,6 +33,8 @@ celery_app.conf.update(
         "app.workers.embed.embed_chunks": {"queue": "embed"},
         "app.workers.index.index_document": {"queue": "index"},
         "app.workers.transcribe.transcribe_audio": {"queue": "transcribe"},
+        "app.workers.audiobook.generate_audiobook": {"queue": "audiobook"},
+        "app.workers.podcast.generate_podcast": {"queue": "podcast"},
     },
     worker_prefetch_multiplier=1,
     worker_max_tasks_per_child=50,

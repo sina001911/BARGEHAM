@@ -86,6 +86,14 @@ class Settings(BaseSettings):
     stt_model_size: str = "base"  # tiny | base | small | medium | large
     diarization_enabled: bool = False
 
+    # --- TTS / Audio Creation ---
+    tts_engine: str = "piper"  # piper | edge_tts | none
+    tts_voice_dir: str = "voices"  # Directory containing Piper voice models
+    tts_default_speed: float = 1.0
+    audiobook_chunk_size: int = 2000  # Characters per audiobook chapter
+    podcast_default_pause_ms: int = 300
+    ffmpeg_path: str = "ffmpeg"  # Path to ffmpeg binary
+
     # --- Upload ---
     max_upload_size_mb: int = 100
     allowed_mime_types: str = (

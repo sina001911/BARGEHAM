@@ -36,6 +36,7 @@ from app.academy.learning_router import router as academy_learning_router
 from app.academy.router import router as academy_router
 from app.audio.router import playlists_router as audio_playlists_router
 from app.audio.router import router as audio_router
+from app.audio_creation.router import router as audio_creation_router
 from app.classification.router import router as classification_router
 from app.knowledge.graph_router import (
     extract_router as knowledge_extract_router,
@@ -134,6 +135,7 @@ app.include_router(academy_intelligence_router)
 app.include_router(academy_learning_router)
 app.include_router(audio_router)
 app.include_router(audio_playlists_router)
+app.include_router(audio_creation_router)
 
 # Prometheus metrics
 REQUEST_COUNT = Counter(

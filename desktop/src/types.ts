@@ -332,3 +332,68 @@ export interface AudioPlaylist {
   description: string | null;
   created_at: string;
 }
+
+// --------------------------------------------------------------------------- //
+// Audio Creation Studio
+// --------------------------------------------------------------------------- //
+export interface TTSVoice {
+  id: string;
+  name: string;
+  display_name: string;
+  provider: string;
+  language: string;
+  gender: string;
+  sample_rate: number;
+  is_default_for_lang: boolean;
+}
+
+export interface AudiobookProject {
+  id: string;
+  title: string;
+  source_document_id: string;
+  voice_id: string;
+  speed: number;
+  status: string;
+  output_path: string | null;
+  output_format: string;
+  total_duration_seconds: number | null;
+  file_size_bytes: number | null;
+  version: number;
+  error_message: string | null;
+  created_at: string;
+}
+
+export interface PodcastProject {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  output_path: string | null;
+  output_format: string;
+  total_duration_seconds: number | null;
+  file_size_bytes: number | null;
+  version: number;
+  error_message: string | null;
+  created_at: string;
+}
+
+export interface PodcastSpeaker {
+  id: string;
+  name: string;
+  voice_id: string;
+  color: string | null;
+  order_index: number;
+}
+
+export interface PodcastSegment {
+  id: string;
+  speaker_id: string | null;
+  text: string;
+  order_index: number;
+  voice_speed: number | null;
+  pause_before_ms: number | null;
+  pause_after_ms: number | null;
+  emotion: string | null;
+  status: string;
+  duration_seconds: number | null;
+}
