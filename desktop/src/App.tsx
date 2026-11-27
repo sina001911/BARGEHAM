@@ -19,6 +19,7 @@ import AudioLibraryPage from "@/pages/AudioLibraryPage";
 import AudioPlayerPage from "@/pages/AudioPlayerPage";
 import AudiobookBuilderPage from "@/pages/AudiobookBuilderPage";
 import PodcastStudioPage from "@/pages/PodcastStudioPage";
+import WorkspacePage from "@/pages/WorkspacePage";
 import Toast from "@/components/ui/Toast";
 
 const PAGE_ROUTES: Record<string, React.ComponentType> = {
@@ -41,6 +42,7 @@ const SELF_WRAPPED_ROUTES = new Set([
   "audio-player",
   "audiobook",
   "podcast",
+  "workspace",
 ]);
 
 export default function App() {
@@ -95,6 +97,7 @@ export default function App() {
       }
       if (h === "audiobook") { setHash("audiobook"); return; }
       if (h === "podcast") { setHash("podcast"); return; }
+      if (h === "workspace") { setHash("workspace"); return; }
       setHash(h || "dashboard");
       setDocId(null);
     };
@@ -118,6 +121,8 @@ export default function App() {
       setHash("audiobook");
     } else if (h === "podcast") {
       setHash("podcast");
+    } else if (h === "workspace") {
+      setHash("workspace");
     } else {
       setHash(h || "dashboard");
     }
@@ -175,6 +180,7 @@ export default function App() {
         {hash === "audio-player" && <AudioPlayerPage />}
         {hash === "audiobook" && <AudiobookBuilderPage />}
         {hash === "podcast" && <PodcastStudioPage />}
+        {hash === "workspace" && <WorkspacePage />}
       </>
     );
   }

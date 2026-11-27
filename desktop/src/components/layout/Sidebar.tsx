@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { LayoutDashboard, FileText, Upload, Search, MessageCircle, Settings, GraduationCap, Music, BookOpen, Mic, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, Upload, Search, MessageCircle, Settings, GraduationCap, Music, BookOpen, Mic, LayoutGrid, LogOut, Menu, X } from "lucide-react";
 
 const navItems = [
+  { href: "#workspace", label: "Workspace", icon: LayoutGrid },
   { href: "#dashboard", label: "داشبورد", icon: LayoutDashboard },
   { href: "#documents", label: "اسناد", icon: FileText },
   { href: "#upload", label: "بارگذاری", icon: Upload },

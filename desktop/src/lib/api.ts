@@ -611,3 +611,40 @@ export const creationApi = {
     return res.json();
   },
 };
+
+// --------------------------------------------------------------------------- //
+// Integration / Workspace APIs
+// --------------------------------------------------------------------------- //
+const INTEGRATION_BASE = "http://localhost:8000/integration";
+
+export const integrationApi = {
+  unifiedSearch: async (q: string, limitPerModule?: number): Promise<any> => {
+    const url = new URL(`${INTEGRATION_BASE}/search`);
+    url.searchParams.append("q", q);
+    if (limitPerModule) url.searchParams.append("limit_per_module", String(limitPerModule));
+    const res = await fetch(url.toString());
+    if (!res.ok) throw new Error("Unified search failed");
+    return res.json();
+  },
+  audioToKnowledge: async (audioId: string, kbId: string): Promise<any> => {
+    const res = await fetch(`${INTEGRATION_BASE}/audio-to-knowledge`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audio_id: audioId, kb_id: kbId }),
+    });
+    if (!res.ok) throw new Error("Audio→KB failed");
+    return res.json();
+  },
+  audioToAcademy: async (audioId: string, courseId: string, topic?: string): Promise<any> => {
+    const res = await fetch(`${INTEGRATION_BASE}/audio-to-academy`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audio_id: audioId, course_id: courseId, topic }),
+    });
+    if (!res.ok) throw new Error("Audio→Academy failed");
+    return res.json();
+  },
+  workspace: async (): Promise<any> => {
+    const res = await fetch(`${INTEGRATION_BASE}/workspace`);
+    if (!res.ok) throw new Error("Workspace fetch failed");
+    return res.json();
+  },
+};
